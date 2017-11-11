@@ -36,7 +36,7 @@ class BurgerBuilder extends Component {
 	}
 
 	componentDidMount() {
-
+		// console.log(this.props) --> gets Route props
 		axios.get('/ingredients.json')
 			.then(response => {
 				this.setState({ingredients: response.data});
@@ -98,32 +98,20 @@ class BurgerBuilder extends Component {
 	}
 
 	purchaseContinueHandler = () => {
-		// alert('TBC');
-		this.setState({loading:true});
 
-		const order = {
-			ingredients: this.state.ingredients,
-			price: this.state.totalPrice,
-			customer: {
-				name: 'Pete D',
-				address: {
-					street: 'Binary Lane',
-					postcode: '1010',
-					country: 'Australia'
-				},
-				email: '11010@binary.io'
-			},
-			deliveryMethod: 'amazon'
-		}
-		axios.post('/orders.json', order)
-			.then(response => {
-				this.setState({loading:false,purchasing:false});
-				console.log(response);
+		// this.setState({loading:true});
+
+		const ingredientParams = Object.keys(this.state.ingredients)
+			.map(igKey => {
+				return encodeURIComponent(igKey) + '=' + encodeURIComponent(this.state.ingredients[igKey]);
 			})
-			.catch(error => {
-				this.setState({loading:false,purchasing:false});
-				console.log(error)
-			});
+			.join('&');
+
+		//this.props.history.push('/checkout?' + ingredientParams);
+		this.props.history.push({
+			pathname: '/checkout',
+			search: ingredientParams + '&price=' + this.state.totalPrice
+		})
 
 	}
 
