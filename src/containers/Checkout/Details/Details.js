@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classes from './Details.css';
 import axios from '../../../axios-orders';
+import { connect } from 'react-redux';
 
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
@@ -100,7 +101,7 @@ class Details extends Component {
 		}
 
 		const order = {
-			ingredients: this.props.ingredients,
+			ingredients: this.props.ings,
 			price: this.props.price,
 			orderData: formData
 		}
@@ -144,7 +145,7 @@ class Details extends Component {
 		};
 
 		updatedElement.value = event.target.value;
-		updatedElement.valid = this.checkValidity(updatedElement.value, updatedElement.validation);
+		updatedElement.valid = updatedElement.validation ? this.checkValidity(updatedElement.value, updatedElement.validation) : true;
 		if(!updatedElement.touched)
 			updatedElement.touched = true;
 		updatedForm[inputId] = updatedElement;
@@ -193,4 +194,12 @@ class Details extends Component {
 
 }
 
-export default Details;
+const mapStateToProps = state => {
+	return {
+		ings: state.ingredients,
+		price: state.totalPrice
+	}
+};
+
+
+export default connect(mapStateToProps)(Details);
