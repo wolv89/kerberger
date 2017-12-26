@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import * as orderActions from '../../../store/actions/';
 
 class Details extends Component {
 
@@ -93,8 +95,6 @@ class Details extends Component {
 	orderHandler = (event) => {
 		event.preventDefault();
 
-		this.setState({loading:true});
-
 		const formData = {};
 		for(let field in this.state.orderForm) {
 			formData[field] = this.state.orderForm[field].value;
@@ -105,16 +105,8 @@ class Details extends Component {
 			price: this.props.price,
 			orderData: formData
 		}
-		axios.post('/orders.json', order)
-			.then(response => {
-				this.setState({loading:false});
-				console.log(response);
-				this.props.history.push('/');
-			})
-			.catch(error => {
-				this.setState({loading:false});
-				console.log(error)
-			});
+		
+		this.props.onOrderBurger(order);
 
 	}
 
@@ -181,7 +173,7 @@ class Details extends Component {
 						{fields}
 						<Button btnType="Success">ORDER</Button>
 					</form>);
-		if(this.state.loading)
+		if(this.props.loading)
 			form = <Spinner/>;
 
 		return (
@@ -197,9 +189,16 @@ class Details extends Component {
 const mapStateToProps = state => {
 	return {
 		ings: state.ingredients,
-		price: state.totalPrice
+		price: state.totalPrice,
+		loading: state.loading
 	}
 };
 
 
-export default connect(mapStateToProps)(Details);
+const mapDispatchToProps = dispatch => {
+	return {
+		onOrderBurger: (orderData) => dispatch(orderActions.orderBurger(orderData))
+	};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(Details, axios));
