@@ -86,7 +86,7 @@ class Details extends Component {
 						{value: 'cheapest', label: 'Cheapest'}
 					]
 				},
-				value: ''
+				value: 'fastest'
 			}
 		},
 		loading: false
@@ -188,9 +188,9 @@ class Details extends Component {
 
 const mapStateToProps = state => {
 	return {
-		ings: state.ingredients,
-		price: state.totalPrice,
-		loading: state.loading
+		ings: state.burgerBuilder.ingredients,
+		price: state.burgerBuilder.totalPrice,
+		loading: state.order.loading
 	}
 };
 
